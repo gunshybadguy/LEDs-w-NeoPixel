@@ -14,7 +14,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(64, PIN, NEO_GRB + NEO_KHZ800);
 
 const int buttonPin = 2;     // the number of the pushbutton pin
 int buttonState = 0;         // variable for reading the pushbutton status
-
+boolean check = false; 
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,14 +34,28 @@ void loop() {
   // check if the pushbutton is pressed.
   // if it is, the buttonState is HIGH:
   if (buttonState == HIGH) {
+
+  // confirm that animation is running 
+  check = true;
+
     // turn LED on:
     // Some example procedures showing how to display to the pixels:
   colorWipe(strip.Color(255, 0, 0), 50); // Red
   colorWipe(strip.Color(0, 255, 0), 50); // Green
   colorWipe(strip.Color(0, 0, 255), 50); // Blue
   colorWipe(strip.Color(255, 20, 147), 50); // Pink
+
+  // confirm that animation has finished
+  check = false;
   }
   
+  else if (buttonState == HIGH && check == true){
+
+  //if you pressed button while animation is running:
+  clearStrip();
+  rainbowCycle(20);
+  
+  } // ELSE IF
   
   else {
     // turn LED off:
@@ -70,4 +84,15 @@ void clearStrip() {
   }
 }
 
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
 
